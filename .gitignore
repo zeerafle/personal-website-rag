@@ -8,4 +8,7 @@ wheels/
 
 # venv
 .venv
+
 github_data/
+vector_store/
+.env

@@ -10,6 +10,9 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
     "gitpython>=3.1.44",
+    "langchain-community>=0.3.17",
+    "langchain-google-genai>=2.0.9",
+    "faiss-cpu>=1.10.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
