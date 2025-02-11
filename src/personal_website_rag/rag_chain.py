@@ -27,8 +27,14 @@ def setup_rag():
 
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
 
-    combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
-    rag_chain = create_retrieval_chain(vectorstore.as_retriever(), combine_docs_chain)
+    combine_docs_chain = create_stuff_documents_chain(
+        llm,
+        retrieval_qa_chat_prompt
+    )
+    rag_chain = create_retrieval_chain(
+        vectorstore.as_retriever(),
+        combine_docs_chain
+    )
 
     return rag_chain
 
