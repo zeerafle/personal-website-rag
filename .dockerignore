@@ -1,0 +1,30 @@
+# flyctl launch added from .gitignore
+# python generated files
+**/__pycache__
+**/*.py[oc]
+**/build
+**/dist
+**/wheels
+**/*.egg-info
+
+# venv
+**/.venv
+
+**/github_data
+
+# flyctl launch added from .venv/.gitignore
+.venv/**/*
+
+# flyctl launch added from github_data/.gitignore
+github_data/**/_site
+github_data/**/.sass-cache
+github_data/**/.jekyll-metadata
+github_data/**/Gemfile.lock
+
+# flyctl launch added from github_data/.idea/.gitignore
+# Default ignored files
+github_data/.idea/shelf
+github_data/.idea/workspace.xml
+# Editor-based HTTP Client requests
+github_data/.idea/httpRequests
+fly.toml

@@ -9,7 +9,6 @@
 #   generate-hashes: false
 #   universal: false
 
--e file:.
 aiohappyeyeballs==2.4.6
     # via aiohttp
 aiohttp==3.11.12
@@ -44,9 +43,7 @@ dnspython==2.7.0
 email-validator==2.2.0
     # via fastapi
 faiss-cpu==1.10.0
-    # via personal-website-rag
 fastapi==0.115.8
-    # via personal-website-rag
 fastapi-cli==0.0.7
     # via fastapi
 filetype==1.2.0
@@ -57,7 +54,6 @@ frozenlist==1.5.0
 gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
-    # via personal-website-rag
 google-ai-generativelanguage==0.6.15
     # via google-generativeai
 google-api-core==2.24.1
@@ -115,16 +111,13 @@ jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.3.18
     # via langchain-community
-    # via personal-website-rag
 langchain-community==0.3.17
-    # via personal-website-rag
 langchain-core==0.3.34
     # via langchain
     # via langchain-community
     # via langchain-google-genai
     # via langchain-text-splitters
 langchain-google-genai==2.0.9
-    # via personal-website-rag
 langchain-text-splitters==0.3.6
     # via langchain
 langsmith==0.3.7
@@ -189,7 +182,6 @@ pygments==2.19.1
 pyparsing==3.2.1
     # via httplib2
 python-dotenv==1.0.1
-    # via personal-website-rag
     # via pydantic-settings
     # via uvicorn
 python-multipart==0.0.20
@@ -204,7 +196,6 @@ requests==2.32.3
     # via langchain
     # via langchain-community
     # via langsmith
-    # via personal-website-rag
     # via requests-toolbelt
 requests-toolbelt==1.0.0
     # via langsmith
