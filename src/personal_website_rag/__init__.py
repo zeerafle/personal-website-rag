@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import APIKeyHeader
 from .rag_chain import qa
 from pydantic import BaseModel
 
@@ -9,7 +8,7 @@ import os
 app = FastAPI()
 
 if os.getenv("ENV") == "production":
-    origins = os.getenv("ALLOWED_ORIGINS").split(",")
+    origins = ["https://samfareez.is-a.dev"]
 else:
     origins = ["*", "null"]
 
