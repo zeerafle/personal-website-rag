@@ -1,11 +1,9 @@
 import os
-from git import Repo
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
+from git import Repo
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_pinecone import PineconeVectorStore
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pinecone import Pinecone
 
 load_dotenv()
@@ -19,11 +17,12 @@ if not pc.has_index(index_name):
         cloud="aws",
         region="us-east-1",
         embed={
-            "model":"llama-text-embed-v2",
-        }
+            "model": "llama-text-embed-v2",
+        },
     )
 
 index = pc.Index(index_name)
+
 
 def clone_and_load_repo(github_url, local_dir):
     if os.path.exists(local_dir):
@@ -42,10 +41,10 @@ def clone_and_load_repo(github_url, local_dir):
 
                 for doc in docs:
                     if "_portfolio" in root:
-                        doc.metadata["document_type"]= "portfolio"
+                        doc.metadata["document_type"] = "portfolio"
                         doc.metadata["category"] = "portfolio"
                     elif "_posts" in root:
-                        doc.metadata["document_type"]= "post"
+                        doc.metadata["document_type"] = "post"
                         doc.metadata["category"] = "post"
                     else:
                         doc.metadata["document_type"] = "general"
@@ -78,7 +77,7 @@ def save_vector_store(docs):
         records.append(record)
 
     for batch in range(0, len(records), 96):
-        batch_records = records[batch:batch+96]
+        batch_records = records[batch : batch + 96]
         index.upsert_records(namespace="__default__", records=batch_records)
     print("Documents saved to Pinecone.")
 
