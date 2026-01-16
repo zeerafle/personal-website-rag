@@ -16,9 +16,7 @@ if not pc.has_index(index_name):
         name=index_name,
         cloud="aws",
         region="us-east-1",
-        embed={
-            "model": "llama-text-embed-v2",
-        },
+        embed={"model": "multilingual-e5-large", "field_map": {"text": "text"}},
     )
 
 index = pc.Index(index_name)
