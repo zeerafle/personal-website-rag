@@ -12,7 +12,6 @@ dependencies = [
     "gitpython>=3.1.44",
     "langchain-community>=0.3.17",
     "langchain-google-genai>=2.0.9",
-    "faiss-cpu>=1.10.0",
     "fastapi[standard]>=0.115.8",
     "langchain-pinecone>=0.2.11",
     "unstructured[md]>=0.18.11",
@@ -40,4 +39,4 @@ packages = ["src/personal_website_rag"]
 [tool.rye.scripts]
 dev = "fastapi dev src/personal_website_rag"
 prod = { cmd = "fastapi run src/personal_website_rag", env = { "ENV" = "production" } }
-load-data = "python src/personal_website_rag/data_loader.py"
+load-data = "python src/data_loader.py"

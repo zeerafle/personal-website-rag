@@ -1,36 +1,50 @@
-from langchain import hub
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-
-from dotenv import load_dotenv
 import os
 
+from dotenv import load_dotenv
+from langchain.agents import create_agent
+from langchain.tools import tool
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_pinecone import PineconeEmbeddings, PineconeVectorStore
+from pinecone import Pinecone
 
 load_dotenv()
 
 
-def setup_rag():
-    # load vector store
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    vectorstore = FAISS.load_local(
-        "vector_store/faiss_index", embeddings, allow_dangerous_deserialization=True
-    )
+# load vector store
+pc = Pinecone()
+index_name = os.environ.get("INDEX_NAME", "personal-website")
+index = pc.Index(index_name)
+embeddings = PineconeEmbeddings(model="multilingual-e5-large")
+vector_store = PineconeVectorStore(index=index, embedding=embeddings)
 
+
+@tool(response_format="content_and_artifact")
+def retrieve_context(query: str):
+    """Retrieve information to help answer a query."""
+    retrieved_docs = vector_store.similarity_search(query, k=3)
+    serialized = "\n\n".join(
+        (f"Source: {doc.metadata}\nContent: {doc.page_content}")
+        for doc in retrieved_docs
+    )
+    return serialized, retrieved_docs
+
+
+def setup_rag():
     # initialize gemini
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash-lite-preview-02-05",
-        google_api_key=os.getenv("GOOGLE_API_KEY"),
+        model="gemini-2.5-flash",
+        # google_api_key=os.getenv("GOOGLE_API_KEY"),
         temperature=0.5,
     )
 
-    retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+    tools = [retrieve_context]
+    prompt = (
+        "You have access to a tool that retrieves context from Sam's posts. "
+        "Use the tool to help answer user queries"
+    )
+    agent = create_agent(llm, tools, system_prompt=prompt)
 
-    combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
-    rag_chain = create_retrieval_chain(vectorstore.as_retriever(), combine_docs_chain)
-
-    return rag_chain
+    return agent
 
 
 qa = setup_rag()

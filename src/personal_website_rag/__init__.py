@@ -1,9 +1,10 @@
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .rag_chain import qa
 from pydantic import BaseModel
 
-import os
+from .rag_chain import setup_rag
 
 app = FastAPI()
 
@@ -33,10 +34,18 @@ def index():
 @app.post("/ask")
 async def ask(query: Query):
     try:
-        result = qa.invoke({"input": query.question})
+        agent = setup_rag()
+        result = agent.invoke(
+            {"messages": [{"role": "user", "content": query.question}]}
+        )
+        tool_calls = [
+            message
+            for message in result["messages"]
+            if message.__class__.__name__ == "ToolMessage"
+        ]
         return {
-            "answer": result["answer"],
-            "sources": [doc.metadata["source"] for doc in result["context"]],
+            "answer": result["messages"][-1].content,
+            "sources": [tool_call.artifact for tool_call in tool_calls],
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
