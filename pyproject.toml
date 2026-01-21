@@ -21,21 +21,6 @@ dependencies = [
 readme = "README.md"
 requires-python = ">= 3.12"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.rye]
-managed = true
-dev-dependencies = []
-virtual = true
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/personal_website_rag"]
-
 [tool.rye.scripts]
 dev = "fastapi dev src/personal_website_rag"
 prod = { cmd = "fastapi run src/personal_website_rag", env = { "ENV" = "production" } }
