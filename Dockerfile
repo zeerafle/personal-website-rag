@@ -1,12 +1,12 @@
 FROM python:3.12.8-slim
 
-RUN pip install uv
+# Install uv.
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+# Copy the application into the container.
+COPY . /app
+
+# Install the application dependencies.
 WORKDIR /app
-COPY requirements.lock ./
-RUN uv pip install --no-cache --system -r requirements.lock
-
-COPY src ./src
-COPY vector_store ./vector_store
-COPY .env .
-CMD ENV=production fastapi run src/personal_website_rag
+RUN uv sync --frozen --no-cache
+CMD ["ENV=production", "/app/.venv/bin/fastapi", "run", "app/main.py"]
