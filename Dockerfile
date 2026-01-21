@@ -9,4 +9,5 @@ COPY . /app
 # Install the application dependencies.
 WORKDIR /app
 RUN uv sync --frozen --no-cache
-CMD ["ENV=production", "/app/.venv/bin/fastapi", "run", "app/main.py"]
+ENV ENV=production
+CMD ["/app/.venv/bin/fastapi", "run", "app/main.py"]
