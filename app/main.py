@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from google.api_core.exceptions import ResourceExhausted
 from langgraph.errors import GraphRecursionError
 
 from app.agent import setup_agent
@@ -47,6 +48,11 @@ async def chat(request: ChatRequest):
         )
         message = extract_agent_response(result)
         return ChatResponse(message=message, conversation_id=request.conversation_id)
+    except ResourceExhausted:
+        raise HTTPException(
+            status_code=429,
+            detail="Daily rate limit exceeded. Please try again later.",
+        )
     except GraphRecursionError as e:
         raise HTTPException(status_code=429, detail=str(e))
     except Exception as e:
