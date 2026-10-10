@@ -1,4 +1,6 @@
+import asyncio
 import os
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -7,12 +9,26 @@ from langgraph.errors import GraphRecursionError
 from openai import APIError, RateLimitError
 
 from app.agent import setup_agent
+from app.tools.pinecone_tool import get_vector_store
 from app.models import ChatRequest, ChatResponse
 from app.utils import extract_agent_response
 
 load_dotenv()
 
-app = FastAPI()
+
+def warm_up():
+    setup_agent()
+    get_vector_store()
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # Fly scales this machine to zero. The port only opens once startup returns, so build
+    # everything the first /chat needs here: /health (the site's wake-up ping) then means "ready".
+    await asyncio.to_thread(warm_up)
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 if os.getenv("ENV") == "production":
     origins = ["https://samfareez.is-a.dev"]

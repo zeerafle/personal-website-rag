@@ -16,6 +16,15 @@ primary_region = 'ams'
   min_machines_running = 0
   processes = ['app']
 
+  # Machines stop when idle and start on the next request (the site pings /health on intent).
+  # Generous grace period: cold start imports langchain and builds the agent before the port opens.
+  [[http_service.checks]]
+    method = 'GET'
+    path = '/health'
+    interval = '30s'
+    timeout = '10s'
+    grace_period = '30s'
+
 [[vm]]
   memory = '512mb'
   cpu_kind = 'shared'

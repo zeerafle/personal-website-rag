@@ -1,17 +1,21 @@
+from functools import lru_cache
+
 from langchain_core.tools import Tool
 from langchain_pinecone import PineconeEmbeddings, PineconeVectorStore
 
 from app.services.vectorstore import get_pinecone_index
 
 
+@lru_cache()
+def get_vector_store() -> PineconeVectorStore:
+    embeddings = PineconeEmbeddings(model="multilingual-e5-large")
+    return PineconeVectorStore(index=get_pinecone_index(), embedding=embeddings)
+
+
 def retrieve_context(query: str):
     """Retrieve information to help answer a query."""
     try:
-        embeddings = PineconeEmbeddings(model="multilingual-e5-large")
-        vector_store = PineconeVectorStore(
-            index=get_pinecone_index(), embedding=embeddings
-        )
-        retrieved_docs = vector_store.similarity_search(query, k=3)
+        retrieved_docs = get_vector_store().similarity_search(query, k=3)
 
         # Format results
         results = "\n\n".join(
