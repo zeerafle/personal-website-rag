@@ -15,6 +15,9 @@ from app.utils import extract_agent_response
 
 load_dotenv()
 
+# Each model call or tool call is one step, so a search round trip costs 2. Weaker routed models search repeatedly.
+RECURSION_LIMIT = int(os.getenv("RECURSION_LIMIT", "25"))
+
 
 def warm_up():
     setup_agent()
@@ -65,7 +68,7 @@ async def chat(request: ChatRequest):
                     {"role": "user", "content": request.message},
                 ]
             },
-            config={"recursion_limit": 7},
+            config={"recursion_limit": RECURSION_LIMIT},
         )
         message = extract_agent_response(result)
         return ChatResponse(message=message, conversation_id=request.conversation_id)
@@ -79,7 +82,11 @@ async def chat(request: ChatRequest):
         print(str(e))
         raise HTTPException(status_code=502, detail="The language model is unavailable.")
     except GraphRecursionError as e:
-        raise HTTPException(status_code=429, detail=str(e))
+        print(str(e))
+        raise HTTPException(
+            status_code=429,
+            detail="I searched too long without an answer. Try rephrasing your question.",
+        )
     except Exception as e:
         print(str(e))
         raise HTTPException(status_code=500, detail=str(e))

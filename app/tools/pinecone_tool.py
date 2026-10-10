@@ -28,7 +28,7 @@ def retrieve_context(query: str):
         return (
             results
             if results
-            else "No relevant information found in the knowledge base."
+            else "No relevant information found in the knowledge base. Do not search again; tell the visitor you don't know."
         )
 
     except Exception as e:
@@ -38,6 +38,6 @@ def retrieve_context(query: str):
 def get_pinecone_tool() -> Tool:
     return Tool(
         name="retrieve_context",
-        description="Search the knowledge base to for getting context to answer user questions. Use this when you need to find specific information or context.",
+        description="Search the knowledge base to for getting context to answer user questions. Use this when you need to find specific information or context. Call it at most twice per question.",
         func=retrieve_context,
     )
